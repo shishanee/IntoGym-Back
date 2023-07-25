@@ -39,6 +39,7 @@ module.exports.userController = {
     const payload = {
       id: candidate._id,
       login: candidate.login,
+      name: candidate.name
     };
 
     const token = await jwt.sign(payload, process.env.SECRET_JWT_KEY, {
