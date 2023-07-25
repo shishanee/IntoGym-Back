@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 module.exports.userController = {
   // Регистрация пользователя
   registerUser: async (req, res) => {
-    const { login, password, name } = req.body;
+    const { login, password, name, follow } = req.body;
     const candidate = await User.findOne({ login });
     if (candidate) {
       return res
@@ -20,6 +20,7 @@ module.exports.userController = {
       name: name,
       login: login,
       password: hash,
+      follow: follow,
     });
 
     res.json(user);
@@ -39,7 +40,8 @@ module.exports.userController = {
     const payload = {
       id: candidate._id,
       login: candidate.login,
-      name: candidate.name
+      name: candidate.name,
+      follow: candidate.follow
     };
 
     const token = await jwt.sign(payload, process.env.SECRET_JWT_KEY, {
@@ -50,7 +52,21 @@ module.exports.userController = {
   },
   // вывод одного пользователя
   getUser: async (req, res) => {
-    const data = await User.findById(req.user.id);
+    const data = await User.findById(req.user.id).populate("follow");
+    res.json(data);
+  },
+  addFollow: async (req, res) => {
+    const getFollow = await User.findOne({ login: req.user.login });
+    if(getFollow.follow.length > 0){
+      return res.json('У вас уже есть абонемент')
+    }
+    const data = await User.findOneAndUpdate(
+      { login: req.user.login },
+      {
+        $push: { follow: req.body.follow },
+      },
+      { new: true }
+    );
     res.json(data);
   },
 };
