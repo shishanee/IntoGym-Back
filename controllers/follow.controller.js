@@ -11,4 +11,8 @@ module.exports.followController = {
     });
     res.json(data);
   },
+  getFollow: async (req,res) => {
+    const data = await Follow.find()
+    res.json(data)
+  }
 };
