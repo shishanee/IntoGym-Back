@@ -10,6 +10,8 @@ app.use('/images', express.static(__dirname + '/images'));
 app.use(cors());
 
 app.use(require('./routes/user.route'));
+app.use(require("./routes/productCategory"));
+app.use(require("./routes/product.route"))
 
 
 
