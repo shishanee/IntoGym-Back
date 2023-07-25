@@ -13,6 +13,7 @@ app.use(require("./routes/user.route"));
 app.use(require("./routes/productCategory"));
 app.use(require("./routes/product.route"));
 app.use(require("./routes/follow.route"));
+app.use(require("./routes/cart.route"));
 
 mongoose
   .connect(
