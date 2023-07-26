@@ -12,5 +12,7 @@ module.exports.productCategoryController = {
     }
     );
     res.json(data)
- }
+ },
+
+ 
 }

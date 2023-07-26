@@ -16,5 +16,12 @@ module.exports.productController = {
         inStock: req.body.inStock
     });
     res.json(data)
+ },
+
+ getCategoryProduct: async (req, res) => {
+   const data = await Product.find({
+     category: req.params.id
+   })
+   res.json(data)
  }
 }
