@@ -14,6 +14,7 @@ app.use(require("./routes/productCategory"));
 app.use(require("./routes/product.route"));
 app.use(require("./routes/follow.route"));
 app.use(require("./routes/cart.route"));
+app.use(require("./routes/question.route"))
 
 mongoose
   .connect(
