@@ -43,7 +43,7 @@ module.exports.userController = {
       login: candidate.login,
       name: candidate.name,
       follow: candidate.follow,
-      balance: candidate.balance, 
+      balance: candidate.balance,
     };
 
     const token = await jwt.sign(payload, process.env.SECRET_JWT_KEY, {
@@ -57,10 +57,18 @@ module.exports.userController = {
     const data = await User.findById(req.user.id).populate("follow");
     res.json(data);
   },
+  addMoney: async (req, res) => {
+    const data = await User.findOneAndUpdate(
+      { login: req.user.login },
+      { $inc: { balance: req.body.balance } },
+      { new: true }
+    );
+    res.json(data);
+  },
   addFollow: async (req, res) => {
     const getFollow = await User.findOne({ login: req.user.login });
-    if(getFollow.follow.length > 0){
-      return res.json('У вас уже есть абонемент')
+    if (getFollow.follow.length > 0) {
+      return res.json("У вас уже есть абонемент");
     }
     const data = await User.findOneAndUpdate(
       { login: req.user.login },

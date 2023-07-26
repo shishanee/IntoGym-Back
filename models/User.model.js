@@ -5,7 +5,7 @@ const userSchema = mongoose.Schema({
   login: String,
   password: String,
   balance: {
-    type: String,
+    type: Number,
     default: 0,
   },
   follow: [
