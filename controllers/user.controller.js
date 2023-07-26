@@ -2,6 +2,7 @@ const { JsonWebTokenError } = require("jsonwebtoken");
 const User = require("../models/User.model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const Follow = require("../models/Follow.model");
 
 module.exports.userController = {
   // Регистрация пользователя
@@ -66,17 +67,25 @@ module.exports.userController = {
     res.json(data);
   },
   addFollow: async (req, res) => {
-    const getFollow = await User.findOne({ login: req.user.login });
+    const getFol = await Follow.findById(req.body.follow);
+    const getFollow = await User.findOne({ login: req.user.login }).populate(
+      "follow"
+    );
     if (getFollow.follow.length > 0) {
       return res.json("У вас уже есть абонемент");
     }
+    if (getFollow.balance < getFol.price) {
+      return res.json("Недостаточно средств");
+    }
+
     const data = await User.findOneAndUpdate(
       { login: req.user.login },
       {
+        $inc: {balance: -getFol.price},
         $push: { follow: req.body.follow },
       },
       { new: true }
     );
-    res.json(data);
+    res.json('Вы успешно купили абонемент!');
   },
 };

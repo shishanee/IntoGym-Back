@@ -14,5 +14,6 @@ module.exports.followController = {
   getFollow: async (req,res) => {
     const data = await Follow.find()
     res.json(data)
-  }
+  },
+  
 };
