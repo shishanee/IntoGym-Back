@@ -14,16 +14,13 @@ module.exports.productController = {
       category: req.body.category,
       inStock: req.body.inStock,
     });
-    res.json(data)
- },
+    res.json(data);
+  },
 
- getCategoryProduct: async (req, res) => {
-   const data = await Product.find({
-     category: req.params.id
-   })
-   res.json(data)
- }
-}
+  getCategoryProduct: async (req, res) => {
+    const data = await Product.find({
+      category: req.params.id,
+    });
     res.json(data);
   },
 };

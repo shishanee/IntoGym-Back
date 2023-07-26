@@ -8,12 +8,6 @@ module.exports.productCategoryController = {
 
   createCategory: async (req, res) => {
     const data = await ProductCategory.create({
-        name: req.body.name
-    }
-    );
-    res.json(data)
- },
-}
       name: req.body.name,
     });
     res.json(data);
