@@ -2,11 +2,12 @@ const { JsonWebTokenError } = require("jsonwebtoken");
 const User = require("../models/User.model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const Follow = require("../models/Follow.model");
 
 module.exports.userController = {
   // Регистрация пользователя
   registerUser: async (req, res) => {
-    const { login, password, name } = req.body;
+    const { login, password, name, follow, balance } = req.body;
     const candidate = await User.findOne({ login });
     if (candidate) {
       return res
@@ -20,6 +21,8 @@ module.exports.userController = {
       name: name,
       login: login,
       password: hash,
+      follow: follow,
+      balance: balance,
     });
 
     res.json(user);
@@ -39,6 +42,9 @@ module.exports.userController = {
     const payload = {
       id: candidate._id,
       login: candidate.login,
+      name: candidate.name,
+      follow: candidate.follow,
+      balance: candidate.balance,
     };
 
     const token = await jwt.sign(payload, process.env.SECRET_JWT_KEY, {
@@ -49,7 +55,37 @@ module.exports.userController = {
   },
   // вывод одного пользователя
   getUser: async (req, res) => {
-    const data = await User.findById(req.user.id);
+    const data = await User.findById(req.user.id).populate("follow");
     res.json(data);
+  },
+  addMoney: async (req, res) => {
+    const data = await User.findOneAndUpdate(
+      { login: req.user.login },
+      { $inc: { balance: req.body.balance } },
+      { new: true }
+    );
+    res.json(data);
+  },
+  addFollow: async (req, res) => {
+    const getFol = await Follow.findById(req.body.follow);
+    const getFollow = await User.findOne({ login: req.user.login }).populate(
+      "follow"
+    );
+    if (getFollow.follow.length > 0) {
+      return res.json("У вас уже есть абонемент");
+    }
+    if (getFollow.balance < getFol.price) {
+      return res.json("Недостаточно средств");
+    }
+
+    const data = await User.findOneAndUpdate(
+      { login: req.user.login },
+      {
+        $inc: {balance: -getFol.price},
+        $push: { follow: req.body.follow },
+      },
+      { new: true }
+    );
+    res.json('Вы успешно купили абонемент!');
   },
 };
