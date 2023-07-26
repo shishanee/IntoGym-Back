@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 module.exports.userController = {
   // Регистрация пользователя
   registerUser: async (req, res) => {
-    const { login, password, name, follow } = req.body;
+    const { login, password, name, follow, balance } = req.body;
     const candidate = await User.findOne({ login });
     if (candidate) {
       return res
@@ -21,6 +21,7 @@ module.exports.userController = {
       login: login,
       password: hash,
       follow: follow,
+      balance: balance,
     });
 
     res.json(user);
@@ -41,7 +42,8 @@ module.exports.userController = {
       id: candidate._id,
       login: candidate.login,
       name: candidate.name,
-      follow: candidate.follow
+      follow: candidate.follow,
+      balance: candidate.balance, 
     };
 
     const token = await jwt.sign(payload, process.env.SECRET_JWT_KEY, {

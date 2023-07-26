@@ -4,6 +4,10 @@ const userSchema = mongoose.Schema({
   name: String,
   login: String,
   password: String,
+  balance: {
+    type: String,
+    default: 0,
+  },
   follow: [
     {
       ref: "Follow",
