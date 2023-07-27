@@ -23,4 +23,11 @@ module.exports.productController = {
     });
     res.json(data);
   },
+
+  addRating: async (req, res) => {
+   const data = await Product.findByIdAndUpdate(req.params.id, {
+      $inc: {rating: +1 } 
+   }, {new: true})
+   res.json(data)
+  }
 };

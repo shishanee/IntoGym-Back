@@ -9,6 +9,10 @@ const productSchema = mongoose.Schema({
     type: mongoose.SchemaTypes.ObjectId,
   },
   inStock: Number,
+  rating: {
+    type: Number,
+    default: 0
+  }
 });
 
 const Product = mongoose.model("Product", productSchema);
