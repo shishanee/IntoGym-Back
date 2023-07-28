@@ -8,6 +8,7 @@ router.post("/cart", authMiddleware, cartController.createCart); // создан
 router.get("/cart", authMiddleware, cartController.getCart); // вся корзина
 router.patch("/cart", authMiddleware, cartController.addCart); // добавление в корзину
 router.patch("/cartremove", authMiddleware, cartController.deleteCart); // удаление из корзину
-router.patch('/cart/:id', authMiddleware, cartController.addPlus) // добавление количества в корзину
+router.patch('/cartplus/:id', authMiddleware, cartController.addPlus) // добавление количества в корзину
+router.patch('/cartminus/:id', authMiddleware, cartController.addMinus) // удаление  количества в корзину
 
 module.exports = router;
