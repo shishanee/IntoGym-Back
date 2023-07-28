@@ -35,11 +35,19 @@ module.exports.cartController = {
       res.status(500).json({ error: "Error adding product to cart" });
     }
   },
+
+  cartPay: async (req, res) => {
+    const cart = await Cart.findOne({ user: req.user.id })
+    cart.cart = []
+    await cart.save()
+    res.json('Корзина очищена');
+  },
+
   deleteCart: async (req, res) => {
     const newData = await Cart.findOne({ user: req.user.id }).populate("cart");
     const arr = await newData.cart.find((item) => {
       if (item.id === req.params.id) {
-        item.inStock += item.amount - 1
+        item.inStock += item.amount - 1;
         item.amount = 1;
       }
       return item;
