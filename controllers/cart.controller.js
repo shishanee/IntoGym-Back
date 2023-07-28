@@ -43,4 +43,7 @@ module.exports.cartController = {
       res.status(500).json({ error: "Error adding product to cart" });
     }
   },
+  addPlus: async (req,res) => {
+    
+  }
 };
