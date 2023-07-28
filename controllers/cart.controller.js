@@ -18,13 +18,7 @@ module.exports.cartController = {
     });
     res.json(findUserId);
   },
-  deleteCart: async (req, res) => {
-    const data = await Cart.findOneAndUpdate(
-      { user: req.user.id },
-      { $pull: { cart: { product: req.body.product } } }
-    );
-    res.json("удалено из корзины");
-  },
+
   addCart: async (req, res) => {
     try {
       const data = await Cart.findOneAndUpdate(
@@ -41,13 +35,36 @@ module.exports.cartController = {
       res.status(500).json({ error: "Error adding product to cart" });
     }
   },
+  deleteCart: async (req, res) => {
+    const newData = await Cart.findOne({ user: req.user.id }).populate("cart");
+    const arr = await newData.cart.find((item) => {
+      if (item.id === req.params.id) {
+        item.inStock += item.amount - 1
+        item.amount = 1;
+      }
+      return item;
+    });
+
+    await arr.save();
+
+    const data = await Cart.findOneAndUpdate(
+      { user: req.user.id },
+      { $pull: { cart: req.params.id } },
+      { new: true }
+    );
+
+    res.json(data);
+  },
 
   addPlus: async (req, res) => {
     const newData = await Cart.findOne({ user: req.user.id }).populate("cart");
     const arr = await newData.cart.find((item) => {
       if (item.id === req.params.id) {
-        item.amount++;
-        return item.inStock--;
+        if (item.inStock !== 1) {
+          item.amount++;
+          item.inStock--;
+        }
+        return item;
       }
     });
 
@@ -59,8 +76,11 @@ module.exports.cartController = {
     const newData = await Cart.findOne({ user: req.user.id }).populate("cart");
     const arr = await newData.cart.find((item) => {
       if (item.id === req.params.id) {
-        item.inStock++;
-        return item.amount--;
+        if (item.amount > 1) {
+          item.inStock++;
+          item.amount--;
+        }
+        return item;
       }
     });
 
