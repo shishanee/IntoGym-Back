@@ -14,7 +14,7 @@ module.exports.cartController = {
   },
   getCart: async (req, res) => {
     const findUserId = await Cart.findOne({ user: req.user.id }).populate({
-      path: "cart.product",
+      path: "cart",
     });
     res.json(findUserId);
   },
@@ -31,9 +31,7 @@ module.exports.cartController = {
         { user: req.user.id },
         {
           $push: {
-            cart: {
-              product: req.body.product,
-            },
+            cart: req.body.cart,
           },
         },
         { new: true }
@@ -43,7 +41,19 @@ module.exports.cartController = {
       res.status(500).json({ error: "Error adding product to cart" });
     }
   },
-  addPlus: async (req,res) => {
-    
-  }
+  addPlus: async (req, res) => {
+    // console.log(req.params.id)
+    // const data = await Cart.findOne({ user: req.user.id })
+    // const product = data.cart.map((item) => {
+    //   if(item.id === req.params.id){
+    //     return item.id
+    //   }
+    // })
+    // const newId = product.find((item) => item === req.params.id)
+    // const newAmount = await Cart.findOne({cart:newId})
+    // res.json(newAmount)
+    const data = await Cart.find({ user: req.user.id });
+    const newData = await Cart.find({ cart: req.params.id }).populate('cart')
+    res.json(newData)
+  },
 };
