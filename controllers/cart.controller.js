@@ -1,4 +1,5 @@
 const Cart = require("../models/Cart.model");
+const User = require("../models/User.model");
 
 module.exports.cartController = {
   createCart: async (req, res) => {
@@ -37,10 +38,16 @@ module.exports.cartController = {
   },
 
   cartPay: async (req, res) => {
-    const cart = await Cart.findOne({ user: req.user.id })
-    cart.cart = []
-    await cart.save()
-    res.json('Корзина очищена');
+    const user = await User.findOne({ login: req.user.login });
+    if (user.balance < req.body.result) {
+      return res.json("Недостаточно средств");
+    }
+    const cart = await Cart.findOne({ user: req.user.id });
+    user.balance = user.balance - req.body.result;
+    cart.cart = [];
+    await user.save();
+    await cart.save();
+    res.json("Оплата успешно прошла!");
   },
 
   deleteCart: async (req, res) => {
