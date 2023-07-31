@@ -16,6 +16,10 @@ const productSchema = mongoose.Schema({
   amount: {
     type: Number,
     default: 1
+  },
+  isOnCart: {
+    type: String,
+    default: 'Добавить в корзину'
   }
 });
 
